@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure to represent a student
+typedef struct Student {
+    int rollNumber;
+    char name[100];
+    float cgpa;
+    struct Student* next;
+} Student;
+
+// Function to create a new student node
+Student* createStudent(int rollNumber, char name[], float cgpa) {
+    Student* newStudent = (Student*)malloc(sizeof(Student));
+    newStudent->rollNumber = rollNumber;
+    strcpy(newStudent->name, name);
+    newStudent->cgpa = cgpa;
+    newStudent->next = NULL;
+    return newStudent;
+}
+
+// Function to add a student to the list
+void addStudent(Student** list, int rollNumber, char name[], float cgpa) {
+    Student* newStudent = createStudent(rollNumber, name, cgpa);
+    if (*list == NULL) {
+        *list = newStudent;
+    } else {
+        Student* currStudent = *list;
+        while (currStudent->next != NULL) {
+            currStudent = currStudent->next;
+        }
+        currStudent->next = newStudent;
+    }
+    printf("Student added successfully!\n");
+}
+
+// Function to display all students in the list
+void displayStudents(Student* list) {
+    if (list == NULL) {
+        printf("The list is empty.\n");
+    } else {
+        Student* currStudent = list;
+        printf("Students in the list:\n");
+        while (currStudent != NULL) {
+            printf("Roll Number: %d\n", currStudent->rollNumber);
+            printf("Name: %s\n", currStudent->name);
+            printf("CGPA: %.2f\n\n", currStudent->cgpa);
+            currStudent = currStudent->next;
+        }
+    }
+}
+
+// Function to remove a student from the list
+void removeStudent(Student** list, int rollNumber) {
+    if (*list == NULL) {
+        printf("The list is empty.\n");
+        return;
+    }
+    if ((*list)->rollNumber == rollNumber) {
+        Student* temp = *list;
+        *list = (*list)->next;
+        free(temp);
+        printf("Student removed successfully!\n");
+        return;
+    }
+    Student* prevStudent = *list;
+    Student* currStudent = (*list)->next;
+    while (currStudent != NULL && currStudent->rollNumber != rollNumber) {
+        prevStudent = currStudent;
+        currStudent = currStudent->next;
+    }
+    if (currStudent == NULL) {
+        printf("Student not found in the list.\n");
+    } else {
+        prevStudent->next = currStudent->next;
+        free(currStudent);
+        printf("Student removed successfully!\n");
+    }
+}
+
+// Function to free memory allocated for the list
+void freeList(Student** list) {
+    Student* currStudent = *list;
+    while (currStudent != NULL) {
+        Student* temp = currStudent;
+        currStudent = currStudent->next;
+        free(temp);
+    }
+    *list = NULL;
+    printf("List memory freed successfully!\n");
+}
+
+int main() {
+    Student* list = NULL;
+    int choice;
+    int rollNumber;
+    char name[100];
+    float cgpa;
+    do {
+        printf("Student Management System\n");
+        printf("1. Add a student\n");
+        printf("2. Display all students\n");
+        printf("3. Remove a student\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                printf("Enter the roll number of the student: ");
+                scanf("%d", &rollNumber);
+                printf("Enter the name of the student: ");
+                scanf(" %[^\n]s", name);
+                printf("Enter the CGPA of the student: ");
+                scanf("%f", &cgpa);
+                addStudent(&list, rollNumber, name, cgpa);
+                break;
+            case 2:
+                displayStudents(list);
+                break;
+            case 3:
+                printf("Enter the roll number of the student to remove: ");
+                scanf("%d", &rollNumber);
+                removeStudent(&list, rollNumber);
+                break;
+            case 4:
+                freeList(&list);
+                printf("Thank you for using the Student Management System. Goodbye!\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+        printf("\n");
+    } while (choice != 4);
+    return 0;
+}
