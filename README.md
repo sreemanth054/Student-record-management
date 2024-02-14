@@ -1,0 +1,1 @@
+This C program implements a Student Management System using linked lists. It allows users to add, display, and remove student records through a menu-driven interface. The system efficiently manages memory allocation, ensuring proper handling of student data while providing flexibility for managing student records.
